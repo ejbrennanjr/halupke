@@ -1,0 +1,45 @@
+
+{
+	"userId": "userid",
+	"firstName": "firstname",
+	"lastName": "lastname",
+	"email": "email",
+	"phoneNo": "phoneno",
+	"messages": [],
+	"status": "status",
+	"linkedAccounts": [],
+	"devices": [],
+	"createdDate": "createddate",
+	"history": []
+}
+
+{
+	"networkId": "network", 
+	"geoLocation": "geolocation",
+	"radius": "radius",
+	"state": "state",
+	"manufacturer": "manufacturer",
+	"make": "make",
+	"timeframe": "timeframe",
+	"status": "status",
+	"messages": [],
+	"createdDate": "createddate",
+	"createdBy: "createdby",
+	"members": [
+		{
+			"userId": "userid",
+			"joinDate": "joindate",
+			"status": "status",
+			"createdDate": "createddate",
+			"history": []
+		}
+	]
+	"shared": [
+		{
+			"userId": "userid",
+			"where": "where",
+			"message": "",
+			"createdDate": "createddate",
+		}
+	]
+}
