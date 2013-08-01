@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://d396qusza40orc.cloudfront.net/startup%2Fcode%2Fbootstrap-combined.no-icons.min.css">
     <link rel="stylesheet" href="https://d396qusza40orc.cloudfront.net/startup%2Fcode%2Fsocial-buttons.css">
     
-    <style type="text/css">
+    <style type="text/css" onclick="getLocation();">
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 100% }
@@ -17,43 +17,69 @@
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDTnuZ5uRWGXvogUVQBWwRq7fRSsg4i80&sensor=false"></script>
   <head>
 <body>
-	<h1>Hi there</h1>
-	<div id="map-canvas"/>
+	<h1>Halupke.com</h1>
+	Address: <input type="text" id="addressLookup"><br> 
+	Radius: <input type="text" id="radiusLookup" value="10"><br>
+	<button class="btn" onclick="getLocation()" type="button">Lookup</button><br>
+
+	<div id="map-canvas" style="width: 480px; height: 480px;"></div>
 
     <script type="text/javascript">
-		var user = { 
-						"userId": "userid",
-						"firstName": "firstname",
-						"lastName": "lastname",
-						"email": "email",
-						"phoneNo": "phoneno",
-						"messages": [],
-						"status": "status",
-						"linkedAccounts": [],
-						"devices": [],
-						"createdDate": "createddate",
-						"history": []
-					};
-
-		document.write("firstname = " + user.firstName);
 
 
-
-	    function initialize() {
 	    
-			function getLocation() {
-				  if (navigator.geolocation) {
-				   navigator.geolocation.getCurrentPosition(showPosition);
-				  }
-				  else alert("Geolocation is not supported by this browser.");
+		function getLocation() {
+			if ($("#addressLookup").val() === "") {
+			  if (navigator.geolocation) {
+			   navigator.geolocation.getCurrentPosition(showPosition_Coords);
+			  }
+			  else alert("Geolocation is not supported by this browser.");
+			}
+			else
+			{
+				var geocoder = new google.maps.Geocoder();
+			  	var address = $("#addressLookup").val();
+			    geocoder.geocode( { 'address': address}, function(results, status) {
+														      if (status == google.maps.GeocoderStatus.OK) {
+														     	showPosition(results[0].geometry.location) 
+														      } else {
+														        alert("Geocode was not successful for the following reason: " + status);
+														      }
+									 				     });	
 			}
 
- 		    function showPosition(position) {
- 		    	var radiusMiles = 100;  // 1 mile = 1609.34 meters
- 		    	var mapLatLang = new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+
+			function showPosition_Coords(positionCoords) {
+				var mapLatLang = new google.maps.LatLng(positionCoords.coords.latitude, positionCoords.coords.longitude)
+				var geocoder = new google.maps.Geocoder();
+				geocoder.geocode( { 'latLng': mapLatLang}, function(results, status) {
+														      if (status == google.maps.GeocoderStatus.OK) {
+														      	$("#addressLookup").val(results[1].formatted_address);
+														      } else {
+														        alert("Geocode was not successful for the following reason: " + status);
+														      }
+									 				     });	
+				showPosition(mapLatLang);
+			}
+
+		    function showPosition(mapLatLang) {
+		    	var radiusMiles = $("#radiusLookup").val();  // 1 mile = 1609.34 meters
+		    	var mapZoom = 9
+
+		    	if (radiusMiles>=30) {
+		    		mapZoom = 8;
+		    	}
+		    	else if(radiusMiles>=20) {
+		    		mapZoom = 10;
+		    	}
+		    	else {
+		    		mapZoom = 11;
+		    	}
+
+		    	
 		        var mapOptions = {
 		          center: mapLatLang,
-		          zoom: 9,
+		          zoom: mapZoom,
 		          mapTypeId: google.maps.MapTypeId.ROADMAP
 		        };
 
@@ -71,17 +97,15 @@
 				  radius: (1609.34 * radiusMiles),    
 				  fillColor: '#AA0000'
 				});
+			
 				circle.bindTo('center', marker, 'position');				
 
-		    }			
+			
+		    }
+			
+		}
 
-
-
-
-			getLocation();
-	    }
-
-	    google.maps.event.addDomListener(window, 'load', initialize);
+	   google.maps.event.addDomListener(window, 'load', getLocation);
     </script>
 
 
